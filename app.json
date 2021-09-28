@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "CinemaPosters",
+    "slug": "CinemaPosters",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "CinemaPosters"
+}
