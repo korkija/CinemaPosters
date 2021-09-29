@@ -1,14 +1,23 @@
-import React, { useEffect } from "react";
-import { StyleSheet, Dimensions, Text, ScrollView } from "react-native";
+import React, { useCallback, useEffect } from "react";
+import {
+  StyleSheet,
+  Dimensions,
+  Text,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+} from "react-native";
 import FastImage from "react-native-fast-image";
 import { useDispatch, useSelector } from "react-redux";
-import YouTube from "react-native-youtube";
 import {
   getMovieDetailsThunk,
   setFavouriteMovie,
 } from "../redux/store/actions/movieActions";
 import { IMAGE_PATH } from "../../build.config";
-import { movieDetailsSelector } from "../redux/store/selectors/moviesSelector";
+import {
+  movieDetailsSelector,
+  favouritesSelector,
+} from "../redux/store/selectors/moviesSelector";
 import { HeartIcon } from "../components/HeartIcon";
 
 const { width } = Dimensions.get("window");
@@ -17,6 +26,7 @@ export const DetailsMovieScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
   const id = route.params?.id;
   const movie = useSelector(movieDetailsSelector(id));
+  const favourites = useSelector(favouritesSelector);
 
   const onPressHeart = () => {
     dispatch(setFavouriteMovie(id));
@@ -31,11 +41,21 @@ export const DetailsMovieScreen = ({ navigation, route }) => {
       headerTitle: movie?.title,
       headerRight: () => {
         return (
-          <HeartIcon onPress={onPressHeart} isFavourite={movie?.isFavourite} />
+          <HeartIcon
+            onPress={onPressHeart}
+            isFavourite={favourites.find((item) => item === movie?.id)}
+          />
         );
       },
     });
-  }, [navigation, movie?.isFavourite]);
+  }, [navigation, favourites, movie?.title]);
+
+  const onPressVideo = useCallback(() => {
+    Linking.openURL(
+      "https://www.youtube.com/watch?v=" + movie?.videoList?.[0]?.key
+    );
+  }, [movie?.videoList?.[0]?.key]);
+
   console.log("movie", movie);
   if (!movie) return null;
   return (
@@ -47,19 +67,12 @@ export const DetailsMovieScreen = ({ navigation, route }) => {
           uri: IMAGE_PATH + movie.poster_path,
         }}
       />
-      {/*<Text style={styles.overview}>{movie.videoList[0]}</Text>*/}
       <Text style={styles.overview}>{movie.overview}</Text>
-      <YouTube
-        videoId="KVZ-P-ZI6W4" // The YouTube video ID
-        play // control playback of video with true/false
-        fullscreen // control whether the video should play in fullscreen or inline
-        // loop // control whether the video should loop when ended
-        // onReady={(e) => this.setState({ isReady: true })}
-        // onChangeState={(e) => this.setState({ status: e.state })}
-        // onChangeQuality={(e) => this.setState({ quality: e.quality })}
-        // onError={(e) => this.setState({ error: e.error })}
-        style={{ alignSelf: "stretch", height: 300 }}
-      />
+      {movie?.videoList && (
+        <TouchableOpacity style={styles.button} onPress={onPressVideo}>
+          <Text style={styles.buttonText}>TRAILER</Text>
+        </TouchableOpacity>
+      )}
     </ScrollView>
   );
 };
@@ -78,6 +91,20 @@ const styles = StyleSheet.create({
     flex: 1,
     width: width,
     height: width,
+  },
+  button: {
+    width: 200,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "grey",
+    borderRadius: 10,
+    marginLeft: 30,
+    marginBottom: 50,
+  },
+  buttonText: {
+    marginHorizontal: 10,
+    fontSize: 22,
   },
   overview: {
     marginTop: 10,

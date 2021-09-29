@@ -1,11 +1,13 @@
 import { Dimensions, FlatList, RefreshControl, StyleSheet } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { ListItem } from "./ListItem";
+import { CardMovie } from "./CardMovie";
 import {
   getMoviesThunk,
   loadMoreMoviesThunk,
 } from "../redux/store/actions/movieActions";
+import { useDispatch, useSelector } from "react-redux";
+import { isLoadingSelector } from "../redux/store/selectors/moviesSelector";
 
 const { width } = Dimensions.get("window");
 const keyExtractor = (item, page) => item.id.toString() + page;
@@ -16,30 +18,31 @@ export const ListMovies = ({
   page,
   pageCount,
 }) => {
+  const dispatch = useDispatch();
   const navigation = useNavigation();
-  const loadNewData = useRef(true);
-  const [refresh, setRefresh] = useState(false);
+  const isLoading = useSelector(isLoadingSelector);
 
-  const openMovie = ({ movieId }) => {
-    navigation.navigate("Details", {
-      id: movieId,
-    });
-  };
+  const openMovie = useCallback(
+    ({ movieId }) => {
+      navigation.navigate("Details", {
+        id: movieId,
+      });
+    },
+    [navigation]
+  );
 
-  const loadMore = async () => {
-    if (loadNewData.current) {
+  const loadMore = useCallback(() => {
+    if (!isLoading) {
       if (page < pageCount) {
-        loadNewData.current = false;
-        await dispatch(loadMoreMoviesThunk(page));
-        loadNewData.current = true;
+        dispatch(loadMoreMoviesThunk(page));
       }
     }
-  };
+  }, [dispatch, isLoading, page, pageCount]);
 
   const renderPicture = useCallback(
     (movie) => {
       return (
-        <ListItem
+        <CardMovie
           movie={movie.item}
           imageStyle={styles.image}
           openMovie={() => {
@@ -51,11 +54,10 @@ export const ListMovies = ({
     [movies]
   );
 
-  const onRefresh = async () => {
-    setRefresh(true);
-    await dispatch(getMoviesThunk());
-    setRefresh(false);
-  };
+  const onRefresh = useCallback(() => {
+    dispatch(getMoviesThunk());
+  }, [dispatch]);
+
   return (
     <FlatList
       onEndReached={loadMore}
@@ -67,7 +69,7 @@ export const ListMovies = ({
       refreshControl={
         <RefreshControl
           onRefresh={onRefresh}
-          refreshing={refresh}
+          refreshing={isLoading}
           colors={["#fa6f44"]}
           tintColor="#f28e26"
         />

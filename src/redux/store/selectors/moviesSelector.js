@@ -9,10 +9,13 @@ export const pageSelector = (state) => {
 export const pageCountSelector = (state) => {
   return state.movieAPI.pageCount;
 };
+export const isLoadingSelector = (state) => {
+  return state.movieAPI.isLoading;
+};
 const moviesDetailsSelector = (state) => {
   return state.movieAPI.moviesDetails;
 };
-const favouritesSelector = (state) => {
+export const favouritesSelector = (state) => {
   return state.movieAPI.idFavouriteMovies;
 };
 
@@ -20,35 +23,15 @@ export const favouriteMoviesSelector = createSelector(
   moviesSelector,
   favouritesSelector,
   (movies, favourites) => {
-    const arrFavoriteMovies = favourites.reduce((prev, itemF) => {
-      const tt = movies
-        .filter((item) => item.id === itemF)
-        .reduce((prev, item) => {
-          return [...prev, { ...item, isFavourite: true }];
-        }, []);
+    return favourites.reduce((prev, itemF) => {
+      const tt = movies.filter((item) => item.id === itemF);
       return [...prev, ...tt];
     }, []);
-    return arrFavoriteMovies;
-  }
-);
-
-export const moviesDetailsFavouritesSelector = createSelector(
-  moviesDetailsSelector,
-  favouritesSelector,
-  (movies, favourites) => {
-    const arrFavoriteMovies = movies.reduce((prev, itemD) => {
-      const favour = favourites.find((item) => item === itemD.id);
-      if (favour) {
-        return [...prev, { ...itemD, isFavourite: true }];
-      }
-      return [...prev, itemD];
-    }, []);
-    return arrFavoriteMovies;
   }
 );
 
 export const movieDetailsSelector = (id) => (state) => {
-  const movies = moviesDetailsFavouritesSelector(state);
+  const movies = moviesDetailsSelector(state);
   return movies.find((item) => {
     return item.id === id;
   });

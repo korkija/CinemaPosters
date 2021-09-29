@@ -3,7 +3,7 @@ import { TouchableOpacity, StyleSheet, Text } from "react-native";
 import FastImage from "react-native-fast-image";
 import { IMAGE_PATH } from "../constants";
 
-export const ListItem = ({ movie, openMovie, imageStyle }) => {
+export const CardMovie = ({ movie, openMovie, imageStyle }) => {
   return (
     <TouchableOpacity onPress={openMovie} style={styles.item}>
       <Text style={styles.title}>{movie.title}</Text>

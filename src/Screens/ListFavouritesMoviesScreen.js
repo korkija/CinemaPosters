@@ -9,7 +9,7 @@ import {
 import { ListMovies } from "../components/ListMovies";
 
 export const ListFavouritesMoviesScreen = () => {
-  const [text, setText] = useState();
+  const [text, setText] = useState("");
   const movies = useSelector(favouriteMoviesSelector);
   const page = useSelector(pageSelector);
   const pageCount = useSelector(pageCountSelector);
@@ -25,7 +25,7 @@ export const ListFavouritesMoviesScreen = () => {
       setMoviesFilter(
         movies.filter(
           (item) =>
-            !!(item.title.toLowerCase().indexOf(value.toLowerCase()) + 1)
+            !!(item.title?.toLowerCase().indexOf(value.toLowerCase()) + 1)
         )
       );
     },
