@@ -1,7 +1,7 @@
 import * as React from "react";
 import { TouchableOpacity, StyleSheet, Text } from "react-native";
 import FastImage from "react-native-fast-image";
-import { IMAGE_PATH } from "../constants";
+import { IMAGE_PATH } from "../../build.config";
 
 export const CardMovie = ({ movie, openMovie, imageStyle }) => {
   return (
