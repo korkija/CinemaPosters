@@ -1,22 +1,15 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getMoviesThunk } from "../redux/store/actions/movieActions";
+import React from "react";
 import { ListMovies } from "../components/ListMovies";
-import {
-  moviesSelector,
-  pageCountSelector,
-  pageSelector,
-} from "../redux/store/selectors/moviesSelector";
+import { useGetListMovies } from "../CustomHooks/ListMoviesScreen/useGetListMovies";
 
 export const ListMoviesScreen = () => {
-  const dispatch = useDispatch();
-  const movies = useSelector(moviesSelector);
-  const page = useSelector(pageSelector);
-  const pageCount = useSelector(pageCountSelector);
-
-  useEffect(() => {
-    dispatch(getMoviesThunk());
-  }, []);
-
-  return <ListMovies movies={movies} page={page} pageCount={pageCount} />;
+  const { movies, loadMore, onRefresh, isLoading } = useGetListMovies();
+  return (
+    <ListMovies
+      movies={movies}
+      loadMore={loadMore}
+      refresh={isLoading}
+      onRefresh={onRefresh}
+    />
+  );
 };
