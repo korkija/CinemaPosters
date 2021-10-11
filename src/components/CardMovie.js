@@ -1,15 +1,15 @@
 import * as React from "react";
-import { TouchableOpacity, StyleSheet, Text } from "react-native";
+import { TouchableOpacity, StyleSheet, Text, Dimensions } from "react-native";
 import FastImage from "react-native-fast-image";
 import { IMAGE_PATH } from "../../build.config";
-
-export const CardMovie = ({ movie, openMovie, imageStyle }) => {
+const { width } = Dimensions.get("window");
+export const CardMovie = ({ movie, openMovie }) => {
   return (
     <TouchableOpacity onPress={openMovie} style={styles.item}>
       <Text style={styles.title}>{movie.title}</Text>
       <FastImage
         resizeMode={FastImage.resizeMode.cover}
-        style={imageStyle}
+        style={styles.image}
         source={{ uri: IMAGE_PATH + movie.backdrop_path }}
       />
       <Text style={styles.overview} numberOfLines={2}>
@@ -26,6 +26,7 @@ const styles: any = StyleSheet.create({
   },
   image: {
     flex: 1,
+    height: width / 2,
   },
   errorContainer: {
     padding: 30,
