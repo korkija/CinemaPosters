@@ -38,9 +38,10 @@ export const moviesReducer = (state = initialState, action) => {
       };
 
     case IS_LOADING:
+      console.log("payload.isLoading", payload);
       return {
         ...state,
-        isLoading: payload.isLoading,
+        isLoading: payload,
       };
     case LOAD_DETAILS_MOVIE:
       return {

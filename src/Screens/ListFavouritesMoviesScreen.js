@@ -1,42 +1,15 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React from "react";
 import { StyleSheet, TextInput } from "react-native";
-import { useSelector } from "react-redux";
-import {
-  favouriteMoviesSelector,
-  pageCountSelector,
-  pageSelector,
-} from "../redux/store/selectors/moviesSelector";
 import { ListMovies } from "../components/ListMovies";
+import { useGetFavouriteListMovies } from "../CustomHooks/ListFavouritesMoviesScreen/useGetFavouriteListMovies";
 
 export const ListFavouritesMoviesScreen = () => {
-  const [text, setText] = useState("");
-  const movies = useSelector(favouriteMoviesSelector);
-  const page = useSelector(pageSelector);
-  const pageCount = useSelector(pageCountSelector);
-  const [moviesFilter, setMoviesFilter] = useState(movies);
-
-  useEffect(() => {
-    inputText(text);
-  }, [movies]);
-
-  const inputText = useCallback(
-    (value) => {
-      setText(value);
-      setMoviesFilter(
-        movies.filter(
-          (item) =>
-            !!(item.title?.toLowerCase().indexOf(value.toLowerCase()) + 1)
-        )
-      );
-    },
-    [movies]
-  );
+  const { moviesFilter, text, inputText } = useGetFavouriteListMovies();
 
   return (
     <ListMovies
       movies={moviesFilter}
-      page={page}
-      pageCount={pageCount}
+      stickyHeaderHiddenOnScroll={true}
       ListHeaderComponent={
         <TextInput
           style={styles.textInput}
@@ -53,6 +26,7 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: "white",
     fontSize: 24,
+    width: "100%",
     paddingHorizontal: 10,
     borderColor: "green",
     borderWidth: 1,
